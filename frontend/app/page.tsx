@@ -1,13 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Function to handle image selection from the camera
+  // Function to trigger the file input
+  const openCamera = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Function to handle image capture
   const handleCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -32,11 +40,11 @@ export default function Home() {
 
         {/* Hidden File Input for Camera */}
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           capture="environment"
           className="hidden"
-          id="cameraInput"
           onChange={handleCapture}
         />
 
@@ -50,12 +58,10 @@ export default function Home() {
 
         {/* Camera Button */}
         <div className="w-full flex justify-center mt-auto mb-8">
-          <label htmlFor="cameraInput">
-            <Button size="lg" className="rounded-full w-16 h-16 p-0 bg-gray-800 text-white">
-              <Camera className="w-8 h-8" />
-              <span className="sr-only">Open camera</span>
-            </Button>
-          </label>
+          <Button onClick={openCamera} size="lg" className="rounded-full w-16 h-16 p-0 bg-gray-800 text-white">
+            <Camera className="w-8 h-8" />
+            <span className="sr-only">Open camera</span>
+          </Button>
         </div>
       </div>
     </main>
