@@ -6,57 +6,21 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
-  const [objectName, setObjectName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const GOOGLE_CLOUD_VISION_API_KEY = "AIzaSyAr4BtkoZzIZFmRQOVhRhxFW2BpQBFgxDc"; // Replace this with your actual API key
-
-  // Function to open the file input (triggers the camera)
+  // Function to trigger the file input
   const openCamera = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // Function to handle image capture and send it to Google Cloud Vision
-  const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Function to handle image capture
+  const handleCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onloadend = async () => {
-        const base64Image = reader.result?.toString().split(",")[1]; // Get Base64 part
-
-        if (base64Image) {
-          setImage(URL.createObjectURL(file)); // Display image preview
-
-          // Send image to Google Cloud Vision API
-          const visionResponse = await fetch(
-            `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_CLOUD_VISION_API_KEY}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                requests: [
-                  {
-                    image: { content: base64Image },
-                    features: [{ type: "LABEL_DETECTION", maxResults: 1 }],
-                  },
-                ],
-              }),
-            }
-          );
-
-          const visionData = await visionResponse.json();
-          if (visionData.responses[0]?.labelAnnotations) {
-            const detectedObject = visionData.responses[0].labelAnnotations[0].description;
-            setObjectName(detectedObject);
-          } else {
-            setObjectName("No object detected");
-          }
-        }
-      };
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
     }
   };
 
@@ -90,11 +54,6 @@ export default function Home() {
             <h2 className="text-lg font-semibold text-center">Captured Image:</h2>
             <img src={image} alt="Captured" className="w-full max-w-xs mt-2 rounded-lg shadow-md" />
           </div>
-        )}
-
-        {/* Display Detected Object Name */}
-        {objectName && (
-          <p className="text-center text-lg font-semibold mt-2">Detected Object: {objectName}</p>
         )}
 
         {/* Camera Button */}
