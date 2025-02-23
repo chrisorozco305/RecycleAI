@@ -1,0 +1,1 @@
+Bielky Ruiz made RecycleGPT, this is a chatbot that identifies what category the object will be under. The different categories include: plastic, paper, metal, glass, compost, or trash. The chatbot also includes some suggestions on how to recycle the different items. 
