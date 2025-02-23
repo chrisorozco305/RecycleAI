@@ -10,7 +10,7 @@ export default function Home() {
   const [image, setImage] = useState<string | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
 
-  // Function to open the camera
+  // Function to request and display camera feed
   const openCamera = async () => {
     try {
       setIsCameraOpen(true);
@@ -35,8 +35,7 @@ export default function Home() {
 
       // Stop the camera after capturing
       const stream = videoRef.current.srcObject as MediaStream;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
+      stream.getTracks().forEach(track => track.stop());
       setIsCameraOpen(false);
     }
   };
