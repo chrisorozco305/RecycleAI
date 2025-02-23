@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycling Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 10px;
+        }
+        #responseBox {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            display: none; /* Initially hidden */
+        }
+    </style>
+    <script>
+        async function classifyItem() {
+            const item = document.getElementById("itemInput").value;
+            const resultDiv = document.getElementById("responseBox");
+
+            if (!item.trim()) {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = "<p style='color:red;'>Please enter an item.</p>";
+                return;
+            }
+
+            resultDiv.style.display = "block";  // Show the response box
+            resultDiv.innerHTML = "<p>Processing...</p>";  // Show loading text
+
+            try {
+                const response = await fetch("/classify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ item: item })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    resultDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p><strong>Category:</strong> ${data.response}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:red;">An error occurred. Please try again.</p>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Recycling Chatbot</h1>
+    <label for="itemInput">Enter an item:</label>
+    <input type="text" id="itemInput" placeholder="e.g., plastic bottle">
+    <button onclick="classifyItem()">Classify</button>
+
+    <!-- 📌 Response box added here -->
+    <div id="responseBox"></div>
+</body>
+</html>
